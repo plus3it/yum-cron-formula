@@ -1,2 +1,5 @@
 # linux-yum_cron-formula
-Formula for enabling yum-cron and associated notification in Linux-based deployments
+This formula is designed to handle the configuration of the yum-cron components for an EL6- or EL7-based instance. When applied, yum-cron will be configured to do daily checks for available RPM updates. If updates are available, yum-cron will:
+* Download the updates
+* Send a notification to a designated system-owner
+It is expected that system-owners will apply all available updates within 45 days of being notified of a new kernel RPM
