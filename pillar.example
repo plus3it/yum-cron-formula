@@ -1,17 +1,19 @@
-notify-channel:	ses
-
-update-behavior:
-  update-profile:	default
-  update-message:	yes
-  update-staging:	yes
-  update-apply:		no
-  update-hosname:	''
-  update-emitters:	stio,email
-  email-from:		no-reply@xyzzy.us
-  smtp-relay:		localhost
-
-ses:
-  ses-id:		AKIAVFFUMWJVIMONSZZJ
-  ses-key:		gkNXgauNqNulB6RyOTZTf06t+dExBAZ1pivQe7V/MgVK
-  ses-endpoint:		email-smtp.us-west-2.amazonaws.com
-  ses-recipient:	sys-owner@xyzzy.us
+yum-cron:
+  notify-channel: 'smtp'
+  
+  update-behavior:
+    update-profile: 'default'
+    update-message: 'yes'
+    update-staging: 'yes'
+    update-apply: 'no'
+    update-hosntame:
+    update-emitters: 'stio,email'
+    email-from: 'no-reply@xyzzy.us'
+    smtp-relay: 'localhost'
+  
+  smtp:
+    addr-recipient: 'sys-owner@xyzzy.us'
+    addr-sender: 'patch-alerts'
+    sasl-user: 'AKIAVFFUMWJVIMONSZZJ'
+    sasl-passwd: 'gkNXgauNqNulB6RyOTZTf06t+dExBAZ1pivQe7V/MgVK'
+    smart-relay: 'smart-mx.xyzzy.us'

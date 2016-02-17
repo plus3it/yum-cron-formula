@@ -3,3 +3,9 @@ This formula is designed to handle the configuration of the yum-cron components 
 * Download the updates
 * Send a notification to a designated system-owner
 It is expected that system-owners will apply all available updates within 45 days of being notified of a new kernel RPM
+
+This formula will pull local hostname information via SaltStack's "grains" functionality using any one of the:
+* host
+* fqdn
+* domain
+Values.
