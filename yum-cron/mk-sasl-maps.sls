@@ -10,17 +10,20 @@
 {%- set notice_recipt = salt['pillar.get']('yum-cron:smtp:addr-recipient', None) %}
 {%- set sasl_user = salt['pillar.get']('yum-cron:smtp:sasl-user', None) %}
 {%- set sasl_passwd = salt['pillar.get']('yum-cron:smtp:sasl-passwd', None) %}
-{%- set smtp_relay = salt['pillar.get']('yum-cron:smtp:smtp-relay', None) %}
+{%- set smtp_relay = salt['pillar.get']('yum-cron:smtp:smart-relay', None) %}
+{%- set smtp_port = salt['pillar.get']('yum-cron:smtp:smart-relay-port', 25) %}
 
-file-test:
+
+# Add {{ notice_sender }} to SASL password-map
+file-sasl_passwd:
   file.append:
-    - name: /tmp/stored-data.txt
+    - name: /etc/postfix/sasl_passwd
     - text: |
-        SMTP Host: {{ smtp_host }}
-        SMTP Domain: {{ smtp_domain }}
-        SMTP FQDN: {{ smtp_fqdn }}
-        Sender: {{ notice_sender }}
-        Recipient: {{ notice_recipt }}
-        SASL User: {{ sasl_user }}
-        SASL Password: {{ sasl_passwd }}
-        SMTP Relay: {{ smtp_relay }}
+        {{ notice_sender }}@{{ smtp_fqdn }}	{{ sasl_user }}:{{ sasl_passwd }}
+
+# Add {{ notice_sender }} to sender-relay map
+file-sender_relay:
+  file.append:
+    - name: /etc/postfix/sender_relay
+    - text: |
+        {{ notice_sender }}@{{ smtp_fqdn }}	[{{ smtp_relay }}]:{{ smtp_port }}
