@@ -17,3 +17,4 @@ yum-cron:
     sasl-user: 'AKIAVFFUMWJVIMONSZZJ'
     sasl-passwd: 'gkNXgauNqNulB6RyOTZTf06t+dExBAZ1pivQe7V/MgVK'
     smart-relay: 'smart-mx.xyzzy.us'
+    smart-relay-port: '25'
