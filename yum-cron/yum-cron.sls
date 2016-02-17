@@ -39,3 +39,13 @@ file_postfix-main-{{ sasl_parm }}:
 
 {%- endfor %}
 
+file_postfix-main_sasl-sender:
+  file.append:
+    - name: '/etc/postfix/main.cf'
+    - text: |
+        
+        # sender-dependent sasl authentication
+        smtp_sender_dependent_authentication = yes
+        sender_dependent_relayhost_maps = hash:/etc/postfix/sender_relay 
+    - require:
+      - pkg: pkg_support
