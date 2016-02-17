@@ -27,3 +27,18 @@ file-sender_relay:
     - name: /etc/postfix/sender_relay
     - text: |
         {{ notice_sender }}@{{ smtp_fqdn }}	[{{ smtp_relay }}]:{{ smtp_port }}
+
+
+# Update hash-file
+postmap-sasl_passwd:
+  cmd.run:
+    - name: '/usr/sbin/postmap /etc/postfix/sasl_passwd'
+    - requires:
+      - file: 'file-sasl_passwd'
+
+# Update hash-file
+postmap-sender_relay:
+  cmd.run:
+    - name: '/usr/sbin/postmap /etc/postfix/sender_relay'
+    - requires:
+      - file: 'file-sender_relay'
