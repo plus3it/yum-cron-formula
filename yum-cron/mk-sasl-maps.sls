@@ -12,19 +12,21 @@
 {%- set sasl_passwd = salt['pillar.get']('yum-cron:smtp:sasl-passwd', None) %}
 {%- set smtp_relay = salt['pillar.get']('yum-cron:smtp:smart-relay', None) %}
 {%- set smtp_port = salt['pillar.get']('yum-cron:smtp:smart-relay-port', 25) %}
+{%- set passwd_file = '/etc/postfix/sasl_passwd' %}
+{%- set relay_file = '/etc/postfix/sender_relay' %}
 
 
 # Add {{ notice_sender }} to SASL password-map
 file-sasl_passwd:
   file.append:
-    - name: /etc/postfix/sasl_passwd
+    - name: '{{ passwd_file }}'
     - text: |
         {{ notice_sender }}@{{ smtp_fqdn }}	{{ sasl_user }}:{{ sasl_passwd }}
 
 # Add {{ notice_sender }} to sender-relay map
 file-sender_relay:
   file.append:
-    - name: /etc/postfix/sender_relay
+    - name: '{{ relay_file }}'
     - text: |
         {{ notice_sender }}@{{ smtp_fqdn }}	[{{ smtp_relay }}]:{{ smtp_port }}
 
@@ -32,13 +34,28 @@ file-sender_relay:
 # Update hash-file
 postmap-sasl_passwd:
   cmd.run:
-    - name: '/usr/sbin/postmap /etc/postfix/sasl_passwd'
+    - name: '/usr/sbin/postmap {{ passwd_file }}'
     - requires:
       - file: 'file-sasl_passwd'
 
 # Update hash-file
 postmap-sender_relay:
   cmd.run:
-    - name: '/usr/sbin/postmap /etc/postfix/sender_relay'
+    - name: '/usr/sbin/postmap {{ relay_file }}'
     - requires:
       - file: 'file-sender_relay'
+
+# Update SEL-contexts as necessary
+{%- if salt['grains.get']('selinux:enabled') %}
+sel-sasl_passwd:
+  cmd.run:
+    - name: 'chcon --reference=/etc/postfix/main.cf {{ passwd_file }} {{ passwd_file }}.db'
+    - requires:
+      - cmd: 'postmap-sasl_passwd'
+
+sel-sender_relay:
+  cmd.run:
+    - name: 'chcon --reference=/etc/postfix/main.cf {{ relay_file }} {{ relay_file }}.db'
+    - requires:
+      - cmd: 'postmap-sender_relay'
+{%- endif %}
