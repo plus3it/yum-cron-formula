@@ -1,21 +1,11 @@
-# yum-cron:update-behavior:el6:
-# ----------
-#    cleanday:
-#       0
-#    dayofweek:
-#       0123456
-#    email-to:
-#       thomas.jones+ses-test@plus3it.com
-#    error-level:
-#       0
-#    svc-wait-time:
-#       300
-#    svc-waits:
-#       yes
-#    systemname:
-#       yum-parm:
+#
+# Salt state to configure the yum-cron service from external
+# data sources (Pillar and grains) and then ensure service has
+# been (re)started
+#
 #################################################################
 
+{%- set this_host = salt['grains.get']('fqdn') %}
 {%- set cfgFile = '/etc/sysconfig/yum-cron' %}
 file-{{ cfgFile }}-exists:
   file.exists:
@@ -31,6 +21,8 @@ file-{{ cfgFile }}-YumParm:
     - pattern: '^YUM_PARAMETER=.*'
     - repl: YUM_PARAMETER= {{ update_struct.get('yum-parm', '') }}
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
 
 file-{{ cfgFile }}-CheckOnly:
   file.replace:
@@ -38,6 +30,8 @@ file-{{ cfgFile }}-CheckOnly:
     - pattern: '^CHECK_ONLY=.*'
     - repl: CHECK_ONLY={{ update_struct.get('check-only', '') }}
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
 
 file-{{ cfgFile }}-CheckFirst:
   file.replace:
@@ -45,6 +39,8 @@ file-{{ cfgFile }}-CheckFirst:
     - pattern: '^CHECK_FIRST=.*'
     - repl: CHECK_FIRST={{ update_struct.get('check-first', '') }}
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
 
 file-{{ cfgFile }}-DownloadOnly:
   file.replace:
@@ -52,6 +48,8 @@ file-{{ cfgFile }}-DownloadOnly:
     - pattern: '^DOWNLOAD_ONLY=.*'
     - repl: DOWNLOAD_ONLY={{ update_struct.get('download-only', '') }}
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
 
 file-{{ cfgFile }}-ErrorLevel:
   file.replace:
@@ -59,6 +57,8 @@ file-{{ cfgFile }}-ErrorLevel:
     - pattern: '^ERROR_LEVEL=.*'
     - repl: ERROR_LEVEL={{ update_struct.get('error-level', '') }}
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
 
 file-{{ cfgFile }}-DebugLevel:
   file.replace:
@@ -66,6 +66,8 @@ file-{{ cfgFile }}-DebugLevel:
     - pattern: '^DEBUG_LEVEL=.*'
     - repl: DEBUG_LEVEL={{ update_struct.get('debug-level', '') }}
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
 
 file-{{ cfgFile }}-RandWait:
   file.replace:
@@ -73,6 +75,69 @@ file-{{ cfgFile }}-RandWait:
     - pattern: '^RANDOMWAIT=.*'
     - repl: RANDOMWAIT="{{ update_struct.get('randwait', '') }}"
     - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+file-{{ cfgFile }}-MailTo:
+  file.replace:
+    - name: '{{ cfgFile }}'
+    - pattern: '^MAILTO=.*'
+    - repl: MAILTO="{{ update_struct.get('email-to', '') }}"
+    - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+file-{{ cfgFile }}-SysName:
+  file.replace:
+    - name: '{{ cfgFile }}'
+    - pattern: '^SYSTEMNAME=.*'
+    - repl: SYSTEMNAME="{{ this_host }}"
+    - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+file-{{ cfgFile }}-WeekDays:
+  file.replace:
+    - name: '{{ cfgFile }}'
+    - pattern: '^DAYS_OF_WEEK=.*'
+    - repl: DAYS_OF_WEEK="{{ update_struct.get('dayofweek', '') }}"
+    - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+file-{{ cfgFile }}-CleanDay:
+  file.replace:
+    - name: '{{ cfgFile }}'
+    - pattern: '^CLEANDAY=.*'
+    - repl: CLEANDAY="{{ update_struct.get('cleanday', '') }}"
+    - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+file-{{ cfgFile }}-SvcWaits:
+  file.replace:
+    - name: '{{ cfgFile }}'
+    - pattern: '^SERVICE_WAITS=.*'
+    - repl: SERVICE_WAITS="{{ update_struct.get('svc-waits', '') }}"
+    - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+file-{{ cfgFile }}-SvcWaitTime:
+  file.replace:
+    - name: '{{ cfgFile }}'
+    - pattern: '^SERVICE_WAIT_TIME=.*'
+    - repl: SERVICE_WAIT_TIME="{{ update_struct.get('svc-wait-time', '') }}"
+    - append_if_not_found : True
+    - require:
+      - file: file-{{ cfgFile }}-exists
+
+svc-yum_cron-running:
+  service.running:
+    - name: 'yum-cron'
+    - enable: True
+    - watch:
+      - file: '{{ cfgFile }}'
 
 {%- elif salt['grains.get']('osmajorrelease') == '7' %}
 {%- set update_struct = salt['pillar.get']('yum-cron:update-behavior:el7', None) %}
