@@ -1,3 +1,4 @@
+```
 ##################
 # EL6 Parameters
 ##################
@@ -27,3 +28,4 @@ emit_via = stdio,email
 email_from = ${email-from}
 email_host = localhost
 email_to = ${ses-recipient}
+```
