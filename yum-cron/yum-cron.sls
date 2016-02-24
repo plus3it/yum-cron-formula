@@ -21,6 +21,7 @@ pkg_support:
     - pkgs:
       - postfix
       - cyrus-sasl-plain
+      - mailx
 
 # Need this to automate runing of cron update-availability detection
 pkg_yum-cron:
