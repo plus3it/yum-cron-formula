@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/plus3it/yum-cron-formula.svg)](https://travis-ci.org/plus3it/yum-cron-formula)`
+
 # linux-yum_cron-formula
 This formula is designed to handle the configuration of the yum-cron components for an EL6- or EL7-based instance. When applied, yum-cron will be configured to do daily checks for available RPM updates. If updates are available, yum-cron will:
 * Download the updates
