@@ -18,4 +18,4 @@ yum-cron:
     sasl-user: 'AKIAI6P43B0SSZ5X4KBS'
     sasl-passwd: 'tlaL1djHIlteTjP3+zq8+EbsaPflYIL7drIFt70C5yuN'
     smart-relay: 'email-smtp.us-west-2.amazonaws.com'
-    smart-relay-port: '587'  
+    smart-relay-port: '587' 
