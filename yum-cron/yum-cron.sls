@@ -6,13 +6,13 @@
 
 # Parm/vals for base SASL client setup
 {%- set sasl_base = [
-       'smtp_sasl_auth_enable = yes',
-       'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd',
-       'smtp_sasl_security_options = noanonymous',
-       'smtp_sasl_mechanism_filter = plain',
-       'smtp_tls_CAfile = /etc/pki/tls/certs/ca-bundle.crt',
-       'smtp_use_tls = yes',
-       'smtp_tls_security_level = encrypt',
+        'smtp_sasl_auth_enable = yes',
+        'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd',
+        'smtp_sasl_security_options = noanonymous',
+        'smtp_sasl_mechanism_filter = plain',
+        'smtp_tls_CAfile = /etc/pki/tls/certs/ca-bundle.crt',
+        'smtp_use_tls = yes',
+        'smtp_tls_security_level = encrypt',
 ] %}
 
 # Need PostFix with cyrus-sasl-plain to act as a SASL-authenticated client
